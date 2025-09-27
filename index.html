@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="utf-8">
+  <title>املاک وزارت ترانسپورت و هوانوردی</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
+  <style>
+    #map { height: 90vh; }
+    #filter {
+      position: absolute;
+      top: 30px;
+      right: 10px;
+      background: whitesmoke;
+      padding: 5px;
+      z-index: 1000;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+    .legend {
+      background: white;
+      padding: 10px;
+      line-height: 18px;
+      color: #333;
+      border-radius: 5px;
+      font-size: 13px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+    .legend i {
+      width: 18px;
+      height: 18px;
+      float: right;
+      margin-left: 8px;
+      opacity: 0.8;
+      border-radius: 5px;
+    }
+    h2{
+      background-color: #b0b9b4e6;
+      padding: 5px;
+      padding-left:5px;
+      padding-right:5px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      border: solid;
+      border-radius: 20px;
+      border-width: 1px;
+      border-color:rgb(159, 154, 154);
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      color: white;
+      font-family:tahoma;
+      text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      
+    }
+    body{
+      background-color:ghostwhite;
+    }
+    .learn{
+      display:inline-block;
+      margin: 5px;
+      text-decoration: none;
+      color: black;
+      font-size: 20px;
+      background: linear-gradient(90deg, gray, cyan);
+      padding: 10px;
+      border-radius: 10px;
+      position: sticky, absolute;
+      right: 550px;
+    }
+    .learn:hover{
+      border: 0px rgb(0, 0, 0) double;
+      box-shadow: 3px 5px 5px 3px black;
+    }
+
+    #map { height: 100vh; }
+    .search-box {
+      position: absolute;
+      top: 25px;
+      left: 13px;
+      z-index: 1000;
+      background: rgb(219, 212, 212);
+      padding: 5px;
+      border-radius: 5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .search-box input {
+      width: 220px;
+      padding: 5px;
+      border: 1px solid #aaa;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+<h2 style="text-align:center">نمایش املاک مرکز و ولایات وزارت ترانسپورت و هوانوردی</h2>
+    
+<div id="filter">
+  <label>انتخاب ولایت: </label>
+  <select id="provinceSelect">
+    <option value="all">همه</option>
+    <option value="کابل">کابل</option>
+    <option value="هرات">هرات</option>
+    <option value="هلمند">هلمند</option>
+    <option value="نیمروز">نیمروز</option>
+    <option value="قندهار">قندهار</option>
+    <option value="ارزگان">ارزگان</option>
+    <option value="میدان وردک">میدان وردک</option>
+    <option value="کندز">کندز</option>
+    <option value="فراه">فراه</option>
+    <option value="جوزجان">جوزجان</option>
+    <option value="زابل">زابل</option>
+    <option value="غور">غور</option>
+  </select>
+</div>
+<div id="map"></div>
+<a class="learn" href="information.html">معلومات بیشتر</a>
+
+      <div id="map"></div>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="جستجو نام زمین / مالک / نوع...">
+  </div>
+
+<script>
+  // جستجو بر اساس نام / مالک / نوع
+    document.getElementById("searchInput").addEventListener("keyup", function(e) {
+      if (e.key === "Enter") {
+        var keyword = this.value.trim();
+        if (!keyword) return;
+
+        var found = false;
+
+        landLayer.eachLayer(function(layer) {
+          var props = layer.feature.properties;
+          if (
+            props.name.includes(keyword) ||
+            props.owner.includes(keyword) ||
+            props.type.includes(keyword)
+          ) {
+            map.fitBounds(layer.getBounds()); // زوم روی زمین پیدا شده
+            layer.openPopup();
+            found = true;
+          }
+        });
+
+        if (!found) {
+          alert("هیچ زمینی با این مشخصات پیدا نشد!");
+        }
+      }
+    });
+
+ var map = L.map('map').setView([34.53, 69.16], 14);
+
+    //(OSM)
+    var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap'
+    });
+
+    //(Esri World Imagery)
+    var satellite = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 
+      {
+        attribution: 'Tiles © Esri'
+      }
+    );
+
+    // اضافه کردن لایه پیش‌فرض
+    osm.addTo(map);
+
+    // کنترل لایه‌ها 
+    L.control.layers({
+      "open street map" : osm,
+      "satellite image ": satellite
+    }).addTo(map);
+
+
+//GeoJSON
+var lands = {
+  "type": "FeatureCollection",
+  //ولایت هرات
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "province": "هرات",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "گذره حاشیه سرک هرات کندهار"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+            [62.220265,34.101441],
+            [62.219927,34.099292],
+            [62.221001,34.099182],
+            [62.221339,34.101330],
+            [62.220265,34.101441]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "province": "هرات",
+        "owner": "MOTA",
+        "type": "زراعتی",
+        "name": "گذره حاشیه سرک هرات"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+            [62.219067, 34.061941],
+            [62.217598, 34.060182],
+            [62.218277, 34.055812],
+            [62.219797, 34.054343],
+            [62.225281, 34.052935],
+            [62.224686, 34.058829],
+            [62.219067, 34.061941]
+        ]]
+      }
+    },
+     {
+      "type": "Feature",
+      "properties": {
+        "province": "هرات",
+        "owner": "MOTA",
+        "type": "زراعتی",
+        "name": "زمین در مسیر هرات اسلام قلعه"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+            [61.938754, 34.400911],
+            [61.940974, 34.407883],
+            [61.951491, 34.405583],
+            [61.949303, 34.398603],
+            [61.938754, 34.400911]
+        ]]
+      }
+    },
+     {
+     "type": "Feature",
+     "properties": {
+        "province": "هرات",
+        "owner": "MOTA",
+        "type": "زراعتی",
+        "name": "حاشیه سرک هرات اسلام قلعه تورغندی"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [62.146940, 34.557421],
+      [62.148093, 34.555472],
+      [62.147105, 34.555077],
+      [62.145963, 34.557017],
+      [62.146940, 34.557421]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "هرات",
+        "owner": "MOTA",
+        "type": "زراعتی",
+        "name": "کرخ قریه رباط سرخ"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [62.338433, 34.366723],
+      [62.338824, 34.364056],
+      [62.340320, 34.363216],
+      [62.340523, 34.363614],
+      [62.340550, 34.367123],
+      [62.338433, 34.366723]
+    ]]
+  }
+},
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "هرات",
+        "owner": "MOTA",
+        "type": "زراعتی",
+        "name": "گذره سرک حاشیه هرات کندهار"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [62.224613, 34.151214],
+      [62.224123, 34.143112],
+      [62.248168, 34.142017],
+      [62.248693, 34.150119],
+      [62.224613, 34.151214],
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "هرات",
+        "owner": "MOTA",
+        "type": "زراعتی",
+        "name": "ولسوالی انجیل قریه سنگ ترقک"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [62.003081, 34.415835],
+      [62.004545, 34.416262],
+      [62.003488, 34.422782],
+      [62.019779, 34.424591],
+      [62.018114, 34.434867],
+      [62.000320, 34.432892],
+      [62.003081, 34.415835]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "هرات",
+        "owner": "MOTA",
+        "type": "زراعتی",
+        "name": "ولسوالی زنده جان قریه رباط پریان"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [61.956451, 34.398601],
+      [61.953877, 34.398227],
+      [61.954062, 34.397345],
+      [61.956636, 34.397710],
+      [61.956451, 34.398601]
+    ]]
+  }
+},
+//ولایت هلمند
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "هلمند",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "ولسوالی گرشک قریه نورزی"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [64.596550, 31.796253],
+      [64.598135, 31.796287],
+      [64.598175, 31.794934],
+      [64.596590, 31.794900],
+      [64.596550, 31.796253]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "هلمند",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "ولسوالی گرشک قریه نورزی"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [64.482357, 31.830154],
+      [64.474205, 31.831169],
+      [64.473530, 31.827235],
+      [64.481692, 31.826229],
+      [64.482357, 31.830154]
+    ]]
+  }
+},
+//ولایت نیمروز
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "نیمروز",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "قریه داکو"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [62.038334, 30.991097],
+      [62.034233, 30.988603],
+      [62.038618, 30.982690],
+      [62.042856, 30.985112],
+      [62.038334, 30.991097]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "نیمروز",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "قریه داکو"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [62.079457, 31.015739],
+      [62.066979, 31.008260],
+      [62.074957, 30.997888],
+      [62.087423, 31.005357],
+      [62.079457, 31.015739]
+    ]]
+  }
+},
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "نیمروز",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "ولسوالی چخانسور"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [62.233501, 31.191525],
+      [62.236039, 31.196971],
+      [62.242028, 31.194905],
+      [62.239500, 31.189458],
+      [62.233501, 31.191525]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "نیمروز",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "ولسوالی خاشرود"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [62.646565, 31.513500],
+      [62.648698, 31.520480],
+      [62.653789, 31.519339],
+      [62.651656, 31.512359],
+      [62.646565, 31.513500]
+    ]]
+  }
+},
+//ولایت میدان وردک
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "میدان وردک",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "دشت توپ"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [68.796271, 34.171630],
+      [68.800582, 34.179709],
+      [68.804720, 34.178038],
+      [68.801103, 34.174722],
+      [68.803440, 34.172959],
+      [68.801928, 34.169881],
+      [68.796271, 34.171630]
+    ]]
+  }
+},
+//ولایت ارزگان
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "ارزگان",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "ازرگان"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [65.885124, 32.600100],
+      [65.880241, 32.590182],
+      [65.884236, 32.588719],
+      [65.887113, 32.594097],
+      [65.885930, 32.594584],
+      [65.886595, 32.595964],
+      [65.885728, 32.596616],
+      [65.886956, 32.598920],
+      [65.885124, 32.600100]
+    ]]
+  }
+},
+//ولایت قندهار
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "قندهار",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "دروازه برقی کوتل مرجه ولسوالی ارغنداب"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [65.704051, 31.703650],
+      [65.705100, 31.703520],
+      [65.705317, 31.705325],
+      [65.704265, 31.705446],
+      [65.704051, 31.703650]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "قندهار",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "کوتل سیاه تخته سنگ"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [65.932417, 31.381299],
+      [65.933424, 31.381594],
+      [65.933957, 31.379854],
+      [65.932944, 31.379561],
+      [65.932417, 31.381299]
+    ]]
+  }
+},
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "قندهار",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "دامان گچ خانه"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [65.866428, 31.648655],
+      [65.854045, 31.630283],
+      [65.856975, 31.629582],
+      [65.858241, 31.630888],
+      [65.860090, 31.631652],
+      [65.861292, 31.631224],
+      [65.866018, 31.635691],
+      [65.867568, 31.643030],
+      [65.869744, 31.644629],
+      [65.869489, 31.645909],
+      [65.869959, 31.646702],
+      [65.866428, 31.648655]
+    ]]
+  }
+},
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "قندهار",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "دامان قریه مانجی"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [66.066871, 31.650499],
+      [66.068925, 31.650898],
+      [66.068732, 31.651801],
+      [66.066676, 31.651397],
+      [66.066871, 31.650499]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "قندهار",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "قریه سنحری ولسوالی ژری"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [65.472994, 31.592339],
+      [65.474631, 31.593038],
+      [65.474159, 31.594069],
+      [65.472517, 31.593384],
+      [65.472994, 31.592339]
+    ]]
+  }
+},
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "قندهار",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "ناحیه هفتم ساحه پل باغ"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [65.575354, 31.609271],
+      [65.575068, 31.611041],
+      [65.568823, 31.609734],
+      [65.570030, 31.607922],
+      [65.568404, 31.607626],
+      [65.567650, 31.609061],
+      [65.565696, 31.607968],
+      [65.567360, 31.605301],
+      [65.575354, 31.609271]
+    ]]
+  }
+},
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "قندهار",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "تیرپارک ولسوالی تخته پل"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [65.929840, 31.344230],
+      [65.941240, 31.345900],
+      [65.943320, 31.337980],
+      [65.931970, 31.336240],
+      [65.929840, 31.344230]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "قندهار",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "سپین بولدک"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [66.392128, 31.012069],
+      [66.390727, 31.013477],
+      [66.395650, 31.016899],
+      [66.397196, 31.014796],
+      [66.396027, 31.014397],
+      [66.393919, 31.014441],
+      [66.393868, 31.013096],
+      [66.392128, 31.012069]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "قندهار",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "ولسوالی میوند کشک نخود"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [64.874290, 31.694380],
+      [64.879180, 31.692700],
+      [64.875660, 31.686130],
+      [64.870760, 31.687810],
+      [64.874290, 31.694380]
+    ]]
+  }
+},
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "کندز",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "علی آباد پل خشتی"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [68.905200, 36.563410],
+      [68.927500, 36.564210],
+      [68.926360, 36.574970],
+      [68.904270, 36.573330],
+      [68.905200, 36.563410]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "کندز",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "مرکز دشت آبدان"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [68.852340, 36.873460],
+      [68.854080, 36.866020],
+      [68.843350, 36.864510],
+      [68.841560, 36.871540],
+      [68.852340, 36.873460]
+    ]]
+  }
+},
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "کندز",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "چهار دره نوآباد"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [68.733300, 36.665560],
+      [68.732200, 36.672540],
+      [68.720850, 36.670190],
+      [68.721850, 36.663410],
+      [68.733300, 36.665560]
+    ]]
+  }
+},
+//ولایت فراه
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "فراه",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "ساحه بندر ابونصر فراهی "
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [62.222237, 32.326875],
+      [62.225082, 32.324665],
+      [62.216488, 32.320877],
+      [62.219127, 32.326604],
+      [62.222237, 32.326875]
+    ]]
+  }
+},
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "فراه",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "تیر پارک دو راهی ولسوالی فراه رود"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [62.674529, 32.725497],
+      [62.679009, 32.723055],
+      [62.669680, 32.714930],
+      [62.665583, 32.717878],
+      [62.674529, 32.725497]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "فراه",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "ترمینل باربری در ساحه ابو نصر فراهی"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [60.976998, 32.145156],
+      [60.956060, 32.148076],
+      [60.954234, 32.139198],
+      [60.975138, 32.136279],
+      [60.976998, 32.145156]
+    ]]
+  }
+},
+//ولایت زابل
+  {
+     "type": "Feature",
+     "properties": {
+        "province": "زابل",
+        "owner": "MOTA",
+        "type": "زراعتی",
+        "name": "مرکز قریه شادو تعمیر مدیریت"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [66.877115, 32.078015],
+      [66.876737, 32.078333],
+      [66.877242, 32.078928],
+      [66.877820, 32.078610],
+      [66.877115, 32.078015]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "زابل",
+        "owner": "MOTA",
+        "type": "زراعتی",
+        "name": "تیر پارک"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [66.844083, 32.054711],
+      [66.845522, 32.059299],
+      [66.848183, 32.056883],
+      [66.846279, 32.052296],
+      [66.844083, 32.054711]
+    ]]
+  }
+},
+//ولایت جوزجان
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "جوزجان",
+        "owner": "MOTA",
+        "type": "زراعتی",
+        "name": "سه سرکه آقچه"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [66.212356, 36.845284],
+      [66.212086, 36.845304],
+      [66.212115, 36.845125],
+      [66.212396, 36.845104],
+      [66.212356, 36.845284]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "جوزجان",
+        "owner": "MOTA",
+        "type": "زراعتی",
+        "name": "5کیلومتری غرب شهر شبرغان"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [65.664994, 36.684999],
+      [65.659750, 36.688046],
+      [65.656935, 36.685252],
+      [65.662558, 36.681854],
+      [65.664994, 36.684999]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "جوزجان",
+        "owner": "MOTA",
+        "type": "زراعتی",
+        "name": "ولسوالی مرکار قریه پل خراسان"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [65.709398, 36.663125],
+      [65.707178, 36.663319],
+      [65.707046, 36.662421],
+      [65.709288, 36.662226],
+      [65.709398, 36.663125]
+    ]]
+  }
+},
+//ولایت غور
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "غور",
+        "owner": "MOTA",
+        "type": "زراعتی",
+        "name": "ترمینال باربری و مسافربری"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [65.233262, 34.516769],
+      [65.231855, 34.518069],
+      [65.229661, 34.516506],
+      [65.231090, 34.515245],
+      [65.233262, 34.516769]
+    ]]
+  }
+},
+//ولایت کابل
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "کابل",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "پلچرخی واقع ده سبز"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [69.400221, 34.569891],
+      [69.400730, 34.569149],
+      [69.397684, 34.568185],
+      [69.397218, 34.568917],
+      [69.400221, 34.569891]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "کابل",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "تولگیت ده سبز"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [69.242400, 34.781649],
+      [69.241483, 34.782111],
+      [69.239968, 34.779634],
+      [69.240939, 34.779217],
+      [69.242400, 34.781649]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "کابل",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "ولسوالی پغمان ارغندی علیا"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [68.950671, 34.468950],
+      [68.945877, 34.472093],
+      [68.931418, 34.458140],
+      [68.933455, 34.457401],
+      [68.940110, 34.453008],
+      [68.950671, 34.468950]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "کابل",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "تولگیت ارغندی ولسوالی پغمان"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [68.900478, 34.430400],
+      [68.901361, 34.429859],
+      [68.903502, 34.431908],
+      [68.902696, 34.432494],
+      [68.900478, 34.430400]
+    ]]
+  }
+},
+
+  ]
+};
+
+// گروه لایه‌ها
+var landLayer;
+
+// تابع رنگ‌دهی بر اساس نوع
+function getColor(type) {
+  switch(type) {
+    case "مسکونی": return "red";
+    case "زراعتی": return "green";
+    case "تجاری": return "blue";
+    default: return "gray";
+  }
+}
+
+// نمایش زمین‌ها
+function showLands(province) {
+  if (landLayer) { map.removeLayer(landLayer); }
+
+  landLayer = L.geoJSON(lands, {
+    filter: function(feature) {
+      return province === "all" || feature.properties.province === province;
+    },
+    style: function(feature) {
+      return { color: getColor(feature.properties.type), fillColor: getColor(feature.properties.type), fillOpacity: 0.6 };
+    },
+    onEachFeature: function (feature, layer) {
+      // محاسبه مساحت
+      var area = turf.area(feature);
+      var areaHa = (area / 10000).toFixed(2);
+      var areaGr = (area / 2000) . toFixed();
+      layer.bindPopup(
+        `<b>مالک:</b> ${feature.properties.owner}<br>` +
+        `<b>ولایت:</b> ${feature.properties.province}<br>` +
+        `<b>نوع:</b> ${feature.properties.type}<br>` +
+        `<b>نام:</b> ${feature.properties.name}<br>` +
+        `<b>مساحت:</b> ${area.toFixed(0)} متر مربع (${areaHa} هکتار) (${areaGr}جریب)`
+      );
+    }
+  }).addTo(map);
+}
+
+// اجرای اولیه
+showLands("all");
+
+// تغییر با Dropdown
+document.getElementById("provinceSelect").addEventListener("change", function(e) {
+  showLands(e.target.value);
+});
+
+// افزودن Legend
+var legend = L.control({position: 'bottomleft'});
+legend.onAdd = function () {
+  var div = L.DomUtil.create('div', 'legend');
+  div.innerHTML += '<i style="background: red"></i> مسکونی<br>';
+  div.innerHTML += '<i style="background: green"></i> زراعتی<br>';
+  div.innerHTML += '<i style="background: blue"></i> تجاری<br>';
+  return div;
+};
+legend.addTo(map);
+
+</script>
+</body>
+</html>
