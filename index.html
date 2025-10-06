@@ -111,6 +111,9 @@
     <option value="جوزجان">جوزجان</option>
     <option value="زابل">زابل</option>
     <option value="غور">غور</option>
+    <option value="بلخ">بلخ</option>
+    <option value="غزنی">غزنی</option>
+    <option value="ننگرهار">ننگرهار</option>
   </select>
 </div>
 <div id="map"></div>
@@ -362,7 +365,7 @@ var lands = {
         "province": "هلمند",
         "owner": "MOTA",
         "type": "مسکونی",
-        "name": "ولسوالی گرشک قریه نورزی"
+        "name": "باباجی"
       },
       "geometry": {
         "type": "Polygon",
@@ -372,6 +375,25 @@ var lands = {
       [64.473530, 31.827235],
       [64.481692, 31.826229],
       [64.482357, 31.830154]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "هلمند",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "مهاجرین، نهر سراج"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [64.496826, 31.644679],
+      [64.498705, 31.645496],
+      [64.499660, 31.643888],
+      [64.497780, 31.643071],
+      [64.496826, 31.644679]
     ]]
   }
 },
@@ -684,6 +706,26 @@ var lands = {
     ]]
   }
 },
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "قندهار",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "ترمینل مسافربری قندهار-ارزگان در ساحه کوتل مرجه "
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [65.727947, 31.693941],
+      [65.728200, 31.692855],
+      [65.724092, 31.688860],
+      [65.723849, 31.691231],
+      [65.727947, 31.693941]
+    ]]
+  }
+},
+//ولایت کندز
   {
      "type": "Feature",
      "properties": {
@@ -738,6 +780,27 @@ var lands = {
       [68.720850, 36.670190],
       [68.721850, 36.663410],
       [68.733300, 36.665560]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "کندز",
+        "owner": "MOTA",
+        "type": "مسکونی",
+        "name": "ولسوالی امام صاحب قریه شیرخان بندر"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [68.624026, 37.179307],
+      [68.622047, 37.178589],
+      [68.622502, 37.177815],
+      [68.622299, 37.177733],
+      [68.623049, 37.176474],
+      [68.624286, 37.176892],
+      [68.624026, 37.179307]
     ]]
   }
 },
@@ -994,6 +1057,90 @@ var lands = {
     ]]
   }
 },
+//ولایت بلخ
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "بلخ",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "دو راهی حیرتان"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [67.433513, 36.787898],
+      [67.425125, 36.788697],
+      [67.428630, 36.812441],
+      [67.437020, 36.811632],
+      [67.433513, 36.787898]
+    ]]
+  }
+},
+//ولایت غزنی
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "غزنی",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "دشت تلخکزار کوتل روضه"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [68.485409, 33.622099],
+      [68.489721, 33.622261],
+      [68.488912, 33.631349],
+      [68.484600, 33.631178],
+      [68.485409, 33.622099]
+    ]]
+  }
+},
+//ولایت ننگرهار
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "ننگرهار",
+        "owner": "MOTA",
+        "type": "تجاری",
+        "name": "ولسوالی مهمند دره، ساحه پوری"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [71.063639, 34.189703],
+      [71.065327, 34.191795],
+      [71.066466, 34.193270],
+      [71.066920, 34.194243],
+      [71.067638, 34.193270],
+      [71.068400, 34.191823],
+      [71.068412, 34.190353],
+      [71.068940, 34.187220],
+      [71.068460, 34.187116],
+      [71.063639, 34.189703]
+    ]]
+  }
+},
+ {
+     "type": "Feature",
+     "properties": {
+        "province": "ننگرهار",
+        "owner": "MOTA",
+        "type": "تجاری",
+        name: "منطقه پوری"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+      [71.061917, 34.190778],
+      [71.063898, 34.192617],
+      [71.065292, 34.191820],
+      [71.063579, 34.189726],
+      [71.061917, 34.190778]
+    ]]
+  }
+},
 
   ]
 };
@@ -1015,6 +1162,8 @@ function getColor(type) {
 function showLands(province) {
   if (landLayer) { map.removeLayer(landLayer); }
 
+ var polygons = {};
+
   landLayer = L.geoJSON(lands, {
     filter: function(feature) {
       return province === "all" || feature.properties.province === province;
@@ -1023,6 +1172,8 @@ function showLands(province) {
       return { color: getColor(feature.properties.type), fillColor: getColor(feature.properties.type), fillOpacity: 0.6 };
     },
     onEachFeature: function (feature, layer) {
+      const landName = feature.properties.name || "بی‌نام";
+        const landLink = `${window.location.origin}${window.location.pathname}?name=${encodeURIComponent(landName)}`;
       // محاسبه مساحت
       var area = turf.area(feature);
       var areaHa = (area / 10000).toFixed(2);
@@ -1032,10 +1183,30 @@ function showLands(province) {
         `<b>ولایت:</b> ${feature.properties.province}<br>` +
         `<b>نوع:</b> ${feature.properties.type}<br>` +
         `<b>نام:</b> ${feature.properties.name}<br>` +
-        `<b>مساحت:</b> ${area.toFixed(0)} متر مربع (${areaHa} هکتار) (${areaGr}جریب)`
-      );
+        `<b>مساحت:</b> ${area.toFixed(0)} متر مربع (${areaHa} هکتار) (${areaGr}جریب)<br>
+         <a href="${landLink}" target="_blank">لینک آدرس</a>
+        `);
+
+       polygons[landName] = layer;
+      
     }
   }).addTo(map);
+   function goToLandFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      let name = params.get('name');
+      if (name) {
+        name = decodeURIComponent(name);
+        const polygon = polygons[name];
+        if (polygon) {
+          map.fitBounds(polygon.getBounds());
+          polygon.openPopup();
+          polygon.setStyle({ color: 'red', weight: 3 });
+        } else {
+          alert("زمینی با این نام پیدا نشد!");
+        }
+      }
+    }
+     goToLandFromURL();
 }
 
 // اجرای اولیه
