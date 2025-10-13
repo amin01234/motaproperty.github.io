@@ -7,17 +7,92 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
   <style>
+
     #map { height: 90vh; }
-    #filter {
-      position: absolute;
-      top: 30px;
-      right: 10px;
-      background: whitesmoke;
-      padding: 5px;
-      z-index: 1000;
-      border-radius: 5px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    }
+
+   /* 🎯 موقعیت و طراحی کلی منوی ولایت‌ها */
+.province-dropdown {
+  position: absolute;
+  top: 20px;
+  right: 80px;
+  z-index: 1000;
+  font-family: "Vazirmatn", "Tahoma", sans-serif;
+}
+
+/* 🔘 دکمه اصلی */
+.dropdown-toggle {
+   background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+   font-family: "Vazirmatn", sans-serif;
+  color: #25088b;
+  border: none;
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  transition: all 0.3s ease;
+}
+
+/* افکت hover روی دکمه */
+.dropdown-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+}
+
+/* 🧭 منوی پنهان‌شده */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(6px);
+  border-radius: 14px;
+  padding: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  min-width: 100px;
+  max-height: 250px;
+  overflow-y: auto;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* ✨ دکمه‌های ولایت */
+.dropdown-menu button {
+  width: 100%;
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px;
+  margin: 4px 0;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.dropdown-menu button:hover {
+  transform: scale(1.05);
+}
+
+/* ✨ انیمیشن باز شدن */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 📱 واکنش‌گرا */
+@media (max-width: 600px) {
+  .province-dropdown {
+    top: 10px;
+    right: 10px;
+  }
+  .dropdown-toggle {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}
+
+
     .legend {
       background: white;
       padding: 10px;
@@ -35,26 +110,54 @@
       opacity: 0.8;
       border-radius: 5px;
     }
-    h2{
-      background-color: #b0b9b4e6;
-      padding: 5px;
-      padding-left:5px;
-      padding-right:5px;
-      padding-top: 10px;
-      padding-bottom: 10px;
-      border: solid;
-      border-radius: 20px;
-      border-width: 1px;
-      border-color:rgb(159, 154, 154);
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      color: white;
-      font-family:tahoma;
-      text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-      
-    }
-    body{
-      background-color:ghostwhite;
-    }
+   
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@600&display=swap');
+
+/*body {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  font-family: "Vazirmatn", sans-serif;
+}*/
+
+h2 {
+  position: relative;
+  display: inline-block;
+  left:350px;
+  text-align: center;
+  font-size: 25px;
+  font-weight: 700;
+  color: #0d47a1;
+  padding: 15px 35px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #ffffff, #e3f2fd);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  z-index: 1;
+  transition: all 0.4s ease;
+  border: 3px solid transparent;
+  margin: 10px;
+}
+
+/* افکت نور روی متن */
+h2::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.8) 50%, transparent 100%);
+  transform: skewX(-20deg);
+  animation: shine 4s infinite;
+  border-radius: 15px;
+}
+
+/* انیمیشن حرکت نور */
+@keyframes shine {
+  0% { left: -100%; }
+  60% { left: 120%; }
+  100% { left: 120%; }
+}
+
     .learn{
       display:inline-block;
       margin: 5px;
@@ -72,22 +175,81 @@
       box-shadow: 3px 5px 5px 3px black;
     }
 
+  /*search box*/
     #map { height: 100vh; }
-    .search-box {
-      position: absolute;
-      top: 25px;
-      left: 13px;
-      z-index: 1000;
-      background: rgb(219, 212, 212);
-      padding: 5px;
-      border-radius: 5px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
-    .search-box input {
-      width: 220px;
-      padding: 5px;
-      border: 1px solid #aaa;
-      border-radius: 3px;
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Vazirmatn", sans-serif;
+  background: #f5f9fd;
+}
+
+#map {
+  height: 90vh;
+  width: 100%;
+}
+
+/* 🌟 استایل اصلی جعبه جستجو */
+.search-box {
+  position: absolute;
+  top: 15px;
+  left: 13%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 10px 18px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  transition: all 0.4s ease;
+  z-index: 1000;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  width: 250px;
+}
+
+/* ✨ افکت هنگام رفتن ماوس */
+.search-box:hover {
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 8px 25px rgba(21, 101, 192, 0.3);
+}
+
+/* 🔍 فیلد ورودی */
+.search-box input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+  padding: 8px 12px;
+  width: 250px;
+  color: #0d47a1;
+  font-weight: 500;
+  text-align: right;
+  direction: rtl;
+  transition: all 0.3s ease;
+}
+
+/* هنگام فوکوس */
+.search-box input:focus {
+  width: 300px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 25px;
+}
+
+/* 🔍 آیکون */
+.search-icon {
+  font-size: 20px;
+  color: #1565c0;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.search-icon:hover {
+  color: #0d47a1;
+  transform: scale(1.2);
     }
   </style>
 </head>
@@ -95,34 +257,40 @@
 
 <h2 style="text-align:center">نمایش املاک مرکز و ولایات وزارت ترانسپورت و هوانوردی</h2>
     
-<div id="filter">
-  <label>انتخاب ولایت: </label>
-  <select id="provinceSelect">
-    <option value="all">همه</option>
-    <option value="کابل">کابل</option>
-    <option value="هرات">هرات</option>
-    <option value="هلمند">هلمند</option>
-    <option value="نیمروز">نیمروز</option>
-    <option value="قندهار">قندهار</option>
-    <option value="ارزگان">ارزگان</option>
-    <option value="میدان وردک">میدان وردک</option>
-    <option value="کندز">کندز</option>
-    <option value="فراه">فراه</option>
-    <option value="جوزجان">جوزجان</option>
-    <option value="زابل">زابل</option>
-    <option value="غور">غور</option>
-    <option value="بلخ">بلخ</option>
-    <option value="غزنی">غزنی</option>
-    <option value="ننگرهار">ننگرهار</option>
-  </select>
-</div>
-<div id="map"></div>
-<a class="learn" href="information.html">معلومات بیشتر</a>
-
-      <div id="map"></div>
-  <div class="search-box">
-    <input type="text" id="searchInput" placeholder="جستجو نام زمین / مالک / نوع...">
+<!-- ✅ منوی کشویی انتخاب ولایت -->
+<div class="province-dropdown">
+  <button class="dropdown-toggle">🏙️ انتخاب ولایت</button>
+  <div class="dropdown-menu">
+    <button data-province="all" style="background:#607d8b;">همه</button>
+    <button data-province="کابل" style="background:#3f51b5;">کابل</button>
+    <button data-province="هرات" style="background:#388e3c;">هرات</button>
+    <button data-province="بلخ" style="background:#fbc02d; color:#333;">بلخ</button>
+    <button data-province="ننگرهار" style="background:#ff7043;">ننگرهار</button>
+    <button data-province="قندهار" style="background:#9c27b0;">قندهار</button>
+    <button data-province="نیمروز" style="background:#009688;">نیمروز</button>
+    <button data-province="ارزگان" style="background:#8d6e63;">ارزگان</button>
+    <button data-province="هلمند" style="background:#0288d1;">هلمند</button>
+    <button data-province="میدان وردک" style="background: #7b1fa2;">میدان وردک</button>
+    <button data-province="کندز" style="background: #c2185b;">کندز</button>
+    <button data-province="فراه" style="background: #0288d1;">فراه</button>
+    <button data-province="جوزجان" style="background: #6d4c41;">جوزجان</button>
+    <button data-province="زابل" style="background: #00796b;">زابل</button>
+    <button data-province="غزنی" style="background: #ff8f00;">غزنی</button>
+    <button data-province="غور" style="background: #455a64;">غور</button>
   </div>
+</div>
+
+
+<!--div id="map"></div-->
+<!--a class="learn" href="information.html">معلومات بیشتر</a-->
+
+     <div id="map"></div>
+
+<!-- 🔍 جعبه جستجو -->
+<div class="search-box">
+  <input type="text" id="searchInput" placeholder="جستجو نام زمین / مالک / نوع...">
+  <span class="search-icon">🔍</span>
+</div>
 
 <script>
   // جستجو بر اساس نام / مالک / نوع
@@ -152,7 +320,7 @@
       }
     });
 
- var map = L.map('map').setView([34.53, 69.16], 14);
+ var map = L.map('map').setView([34.53, 69.16], 6);
 
     //(OSM)
     var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -1162,8 +1330,6 @@ function getColor(type) {
 function showLands(province) {
   if (landLayer) { map.removeLayer(landLayer); }
 
- var polygons = {};
-
   landLayer = L.geoJSON(lands, {
     filter: function(feature) {
       return province === "all" || feature.properties.province === province;
@@ -1172,8 +1338,6 @@ function showLands(province) {
       return { color: getColor(feature.properties.type), fillColor: getColor(feature.properties.type), fillOpacity: 0.6 };
     },
     onEachFeature: function (feature, layer) {
-      const landName = feature.properties.name || "بی‌نام";
-        const landLink = `${window.location.origin}${window.location.pathname}?name=${encodeURIComponent(landName)}`;
       // محاسبه مساحت
       var area = turf.area(feature);
       var areaHa = (area / 10000).toFixed(2);
@@ -1183,39 +1347,19 @@ function showLands(province) {
         `<b>ولایت:</b> ${feature.properties.province}<br>` +
         `<b>نوع:</b> ${feature.properties.type}<br>` +
         `<b>نام:</b> ${feature.properties.name}<br>` +
-        `<b>مساحت:</b> ${area.toFixed(0)} متر مربع (${areaHa} هکتار) (${areaGr}جریب)<br>
-         <a href="${landLink}" target="_blank">لینک آدرس</a>
-        `);
-
-       polygons[landName] = layer;
-      
+        `<b>مساحت:</b> ${area.toFixed(0)} متر مربع (${areaHa} هکتار) (${areaGr}جریب)`
+      );
     }
   }).addTo(map);
-   function goToLandFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      let name = params.get('name');
-      if (name) {
-        name = decodeURIComponent(name);
-        const polygon = polygons[name];
-        if (polygon) {
-          map.fitBounds(polygon.getBounds());
-          polygon.openPopup();
-          polygon.setStyle({ color: 'red', weight: 3 });
-        } else {
-          alert("زمینی با این نام پیدا نشد!");
-        }
-      }
-    }
-     goToLandFromURL();
 }
 
 // اجرای اولیه
 showLands("all");
 
 // تغییر با Dropdown
-document.getElementById("provinceSelect").addEventListener("change", function(e) {
-  showLands(e.target.value);
-});
+//document.getElementById("provinceSelect").addEventListener("change", function(e) {
+  //showLands(e.target.value);
+//});
 
 // افزودن Legend
 var legend = L.control({position: 'bottomleft'});
@@ -1227,6 +1371,41 @@ legend.onAdd = function () {
   return div;
 };
 legend.addTo(map);
+
+// 🎯 باز و بسته شدن منوی کشویی
+const dropdownToggle = document.querySelector('.dropdown-toggle');
+const dropdownMenu = document.querySelector('.dropdown-menu');
+
+dropdownToggle.addEventListener('click', () => {
+  dropdownMenu.style.display =
+    dropdownMenu.style.display === 'block' ? 'none' : 'block';
+});
+
+// بستن منو هنگام کلیک بیرون از آن
+document.addEventListener('click', (e) => {
+  if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+    dropdownMenu.style.display = 'none';
+  }
+});
+
+// 🎯 فیلتر بر اساس ولایت
+dropdownMenu.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const selected = btn.getAttribute('data-province');
+
+    landLayer.clearLayers();
+    lands.features.forEach(f => {
+      if (selected === 'all' || f.properties.province === selected) {
+        landLayer.addData(f);
+      }
+    });
+
+    // تغییر عنوان دکمه اصلی به ولایت انتخابی
+    dropdownToggle.textContent = "🏙️ " + (selected === "all" ? "همه ولایات" : selected);
+    dropdownMenu.style.display = 'none';
+  });
+});
+
 
 </script>
 </body>
