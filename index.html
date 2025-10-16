@@ -414,7 +414,7 @@ var lands = {
      "properties": {
         "province": "هرات",
         "owner": "MOTA",
-        "type": "زراعتی",
+        "type": "دشت",
         "name": "حاشیه سرک هرات اسلام قلعه تورغندی"
       },
       "geometry": {
@@ -433,7 +433,7 @@ var lands = {
      "properties": {
         "province": "هرات",
         "owner": "MOTA",
-        "type": "زراعتی",
+        "type": "مسکونی",
         "name": "کرخ قریه رباط سرخ"
       },
       "geometry": {
@@ -472,7 +472,7 @@ var lands = {
      "properties": {
         "province": "هرات",
         "owner": "MOTA",
-        "type": "زراعتی",
+        "type": "مسکونی",
         "name": "ولسوالی انجیل قریه سنگ ترقک"
       },
       "geometry": {
@@ -493,7 +493,7 @@ var lands = {
      "properties": {
         "province": "هرات",
         "owner": "MOTA",
-        "type": "زراعتی",
+        "type": "دشت",
         "name": "ولسوالی زنده جان قریه رباط پریان"
       },
       "geometry": {
@@ -513,7 +513,7 @@ var lands = {
      "properties": {
         "province": "هلمند",
         "owner": "MOTA",
-        "type": "مسکونی",
+        "type": "زراعتی",
         "name": "ولسوالی گرشک قریه نورزی"
       },
       "geometry": {
@@ -551,7 +551,7 @@ var lands = {
      "properties": {
         "province": "هلمند",
         "owner": "MOTA",
-        "type": "مسکونی",
+        "type": "دشت",
         "name": "مهاجرین، نهر سراج"
       },
       "geometry": {
@@ -571,7 +571,7 @@ var lands = {
      "properties": {
         "province": "نیمروز",
         "owner": "MOTA",
-        "type": "تجاری",
+        "type": "مسکونی",
         "name": "قریه داکو"
       },
       "geometry": {
@@ -628,7 +628,7 @@ var lands = {
      "properties": {
         "province": "نیمروز",
         "owner": "MOTA",
-        "type": "تجاری",
+        "type": "دشت",
         "name": "ولسوالی خاشرود"
       },
       "geometry": {
@@ -648,7 +648,7 @@ var lands = {
      "properties": {
         "province": "میدان وردک",
         "owner": "MOTA",
-        "type": "تجاری",
+        "type": "زراعتی",
         "name": "دشت توپ"
       },
       "geometry": {
@@ -1322,6 +1322,7 @@ function getColor(type) {
     case "مسکونی": return "red";
     case "زراعتی": return "green";
     case "تجاری": return "blue";
+    case "دشت":return "purple"
     default: return "gray";
   }
 }
@@ -1329,6 +1330,8 @@ function getColor(type) {
 // نمایش زمین‌ها
 function showLands(province) {
   if (landLayer) { map.removeLayer(landLayer); }
+
+ var polygons = {};
 
   landLayer = L.geoJSON(lands, {
     filter: function(feature) {
@@ -1338,6 +1341,9 @@ function showLands(province) {
       return { color: getColor(feature.properties.type), fillColor: getColor(feature.properties.type), fillOpacity: 0.6 };
     },
     onEachFeature: function (feature, layer) {
+      const landName = feature.properties.name || "بی‌نام";
+        const landLink = `${window.location.origin}${window.location.pathname}?name=${encodeURIComponent(landName)}`;
+        
       // محاسبه مساحت
       var area = turf.area(feature);
       var areaHa = (area / 10000).toFixed(2);
@@ -1347,10 +1353,31 @@ function showLands(province) {
         `<b>ولایت:</b> ${feature.properties.province}<br>` +
         `<b>نوع:</b> ${feature.properties.type}<br>` +
         `<b>نام:</b> ${feature.properties.name}<br>` +
-        `<b>مساحت:</b> ${area.toFixed(0)} متر مربع (${areaHa} هکتار) (${areaGr}جریب)`
+        `<b>مساحت:</b> ${area.toFixed(0)} متر مربع (${areaHa} هکتار) (${areaGr}جریب)<br>
+        <a href="${landLink}" target="_blank">لینک آدرس</a>
+        `
       );
+
+      polygons[landName] = layer;
     }
   }).addTo(map);
+   function goToLandFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      let name = params.get('name');
+      if (name) {
+        name = decodeURIComponent(name);
+        const polygon = polygons[name];
+        if (polygon) {
+          map.fitBounds(polygon.getBounds());
+          polygon.openPopup();
+          polygon.setStyle({ color: 'red', weight: 3 });
+        } else {
+          alert("زمینی با این نام پیدا نشد!");
+        }
+      }
+    }
+     goToLandFromURL();
+
 }
 
 // اجرای اولیه
@@ -1368,6 +1395,7 @@ legend.onAdd = function () {
   div.innerHTML += '<i style="background: red"></i> مسکونی<br>';
   div.innerHTML += '<i style="background: green"></i> زراعتی<br>';
   div.innerHTML += '<i style="background: blue"></i> تجاری<br>';
+  div.innerHTML += '<i style="background: orange"></i> دشت<br>';
   return div;
 };
 legend.addTo(map);
@@ -1406,6 +1434,7 @@ dropdownMenu.querySelectorAll('button').forEach(btn => {
   });
 });
 
+    goToLandFromURL();
 
 </script>
 </body>
