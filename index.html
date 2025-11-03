@@ -670,8 +670,8 @@ var lands = {
      "properties": {
         "province": "ارزگان",
         "owner": "MOTA",
-        "type": "تجاری",
-        "name": "ازرگان"
+        "type": "مسکونی",
+        "name": "ارزگان"
       },
       "geometry": {
         "type": "Polygon",
@@ -899,7 +899,7 @@ var lands = {
      "properties": {
         "province": "کندز",
         "owner": "MOTA",
-        "type": "مسکونی",
+        "type": "زراعتی",
         "name": "علی آباد پل خشتی"
       },
       "geometry": {
@@ -918,7 +918,7 @@ var lands = {
      "properties": {
         "province": "کندز",
         "owner": "MOTA",
-        "type": "مسکونی",
+        "type": "دشت",
         "name": "مرکز دشت آبدان"
       },
       "geometry": {
@@ -937,7 +937,7 @@ var lands = {
      "properties": {
         "province": "کندز",
         "owner": "MOTA",
-        "type": "مسکونی",
+        "type": "زراعتی",
         "name": "چهار دره نوآباد"
       },
       "geometry": {
@@ -978,7 +978,7 @@ var lands = {
      "properties": {
         "province": "فراه",
         "owner": "MOTA",
-        "type": "مسکونی",
+        "type": "دشت",
         "name": "ساحه بندر ابونصر فراهی "
       },
       "geometry": {
@@ -997,7 +997,7 @@ var lands = {
      "properties": {
         "province": "فراه",
         "owner": "MOTA",
-        "type": "مسکونی",
+        "type": "دشت",
         "name": "تیر پارک دو راهی ولسوالی فراه رود"
       },
       "geometry": {
@@ -1016,7 +1016,7 @@ var lands = {
      "properties": {
         "province": "فراه",
         "owner": "MOTA",
-        "type": "مسکونی",
+        "type": "دشت",
         "name": "ترمینل باربری در ساحه ابو نصر فراهی"
       },
       "geometry": {
@@ -1153,7 +1153,7 @@ var lands = {
      "properties": {
         "province": "کابل",
         "owner": "MOTA",
-        "type": "مسکونی",
+        "type": "زراعتی",
         "name": "پلچرخی واقع ده سبز"
       },
       "geometry": {
@@ -1172,7 +1172,7 @@ var lands = {
      "properties": {
         "province": "کابل",
         "owner": "MOTA",
-        "type": "مسکونی",
+        "type": "دشت",
         "name": "تولگیت ده سبز"
       },
       "geometry": {
@@ -1211,7 +1211,7 @@ var lands = {
      "properties": {
         "province": "کابل",
         "owner": "MOTA",
-        "type": "مسکونی",
+        "type": "تجاری",
         "name": "تولگیت ارغندی ولسوالی پغمان"
       },
       "geometry": {
@@ -1231,7 +1231,7 @@ var lands = {
      "properties": {
         "province": "بلخ",
         "owner": "MOTA",
-        "type": "تجاری",
+        "type": "دشت",
         "name": "دو راهی حیرتان"
       },
       "geometry": {
@@ -1271,7 +1271,7 @@ var lands = {
      "properties": {
         "province": "ننگرهار",
         "owner": "MOTA",
-        "type": "تجاری",
+        "type": "زراعتی",
         "name": "ولسوالی مهمند دره، ساحه پوری"
       },
       "geometry": {
@@ -1295,7 +1295,7 @@ var lands = {
      "properties": {
         "province": "ننگرهار",
         "owner": "MOTA",
-        "type": "تجاری",
+        "type": "زراعتی",
         name: "منطقه پوری"
       },
       "geometry": {
@@ -1343,7 +1343,7 @@ function showLands(province) {
     onEachFeature: function (feature, layer) {
       const landName = feature.properties.name || "بی‌نام";
         const landLink = `${window.location.origin}${window.location.pathname}?name=${encodeURIComponent(landName)}`;
-        
+
       // محاسبه مساحت
       var area = turf.area(feature);
       var areaHa = (area / 10000).toFixed(2);
@@ -1395,7 +1395,7 @@ legend.onAdd = function () {
   div.innerHTML += '<i style="background: red"></i> مسکونی<br>';
   div.innerHTML += '<i style="background: green"></i> زراعتی<br>';
   div.innerHTML += '<i style="background: blue"></i> تجاری<br>';
-  div.innerHTML += '<i style="background: orange"></i> دشت<br>';
+  div.innerHTML += '<i style="background: purple"></i> دشت<br>';
   return div;
 };
 legend.addTo(map);
@@ -1435,6 +1435,7 @@ dropdownMenu.querySelectorAll('button').forEach(btn => {
 });
 
     goToLandFromURL();
+
 
 </script>
 </body>
