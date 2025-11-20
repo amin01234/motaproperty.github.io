@@ -5,22 +5,22 @@
   <title>املاک وزارت ترانسپورت و هوانوردی</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
+ <!--  <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script> -->
   <style>
 
     #map { height: 90vh; }
 
    /* 🎯 موقعیت و طراحی کلی منوی ولایت‌ها */
-.province-dropdown {
+/* .province-dropdown {
   position: absolute;
   top: 20px;
   right: 80px;
   z-index: 1000;
   font-family: "Vazirmatn", "Tahoma", sans-serif;
-}
+} */
 
 /* 🔘 دکمه اصلی */
-.dropdown-toggle {
+/* .dropdown-toggle {
    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
    font-family: "Vazirmatn", sans-serif;
   color: #25088b;
@@ -32,16 +32,16 @@
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0,0,0,0.25);
   transition: all 0.3s ease;
-}
+} */
 
 /* افکت hover روی دکمه */
-.dropdown-toggle:hover {
+/* .dropdown-toggle:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-}
+} */
 
 /* 🧭 منوی پنهان‌شده */
-.dropdown-menu {
+/* .dropdown-menu {
   display: none;
   position: absolute;
   top: 50px;
@@ -55,10 +55,10 @@
   max-height: 250px;
   overflow-y: auto;
   animation: fadeIn 0.2s ease-in-out;
-}
+} */
 
 /* ✨ دکمه‌های ولایت */
-.dropdown-menu button {
+/* .dropdown-menu button {
   width: 100%;
   border: none;
   color: #fff;
@@ -68,20 +68,20 @@
   font-size: 14px;
   cursor: pointer;
   transition: transform 0.2s;
-}
+} */
 
-.dropdown-menu button:hover {
+/* .dropdown-menu button:hover {
   transform: scale(1.05);
-}
+} */
 
 /* ✨ انیمیشن باز شدن */
-@keyframes fadeIn {
+/* @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
-}
+} */
 
 /* 📱 واکنش‌گرا */
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
   .province-dropdown {
     top: 10px;
     right: 10px;
@@ -91,32 +91,44 @@
     padding: 8px 12px;
   }
 }
-
-
-    .legend {
-      background: white;
-      padding: 10px;
-      line-height: 18px;
-      color: #333;
-      border-radius: 5px;
-      font-size: 13px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    }
-    .legend i {
-      width: 18px;
-      height: 18px;
-      float: right;
-      margin-left: 8px;
-      opacity: 0.8;
-      border-radius: 5px;
-    }
+ */
    
-    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@600&display=swap');
+    .legend {
+  background: #ffffff;
+  padding: 12px 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  font-size: 14px;
+  line-height: 20px;
+  direction: rtl;
+  width: 80px;
+  z-index: 9999;
+  border: 1px solid #ddd;
+}
 
-/*body {
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-  font-family: "Vazirmatn", sans-serif;
-}*/
+.legend h4 {
+  margin: 0 0 10px 0;
+  text-align: center;
+  font-weight: bold;
+  font-size: 15px;
+  color: #333;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.legend-color {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border-radius: 4px;
+  margin-left: 8px;
+  border: 1px solid #444;
+}
+
 
 h2 {
   position: relative;
@@ -255,10 +267,10 @@ body {
 </head>
 <body>
 
-<h2 style="text-align:center">نمایش املاک مرکز و ولایات وزارت ترانسپورت و هوانوردی</h2>
+<h2 style="text-align:center">نمایش املاک ترانسپورت جاده ای وزارت ترانسپورت و هوانوردی</h2>
     
 <!-- ✅ منوی کشویی انتخاب ولایت -->
-<div class="province-dropdown">
+<!-- <div class="province-dropdown">
   <button class="dropdown-toggle">🏙️ انتخاب ولایت</button>
   <div class="dropdown-menu">
     <button data-province="all" style="background:#607d8b;">همه</button>
@@ -279,7 +291,7 @@ body {
     <button data-province="غور" style="background: #455a64;">غور</button>
     <button data-province="لوگر" style="background: #f5e429;">لوگر</button>
   </div>
-</div>
+</div> -->
 
 
 <!--div id="map"></div-->
@@ -1336,7 +1348,8 @@ var lands = {
         "province": "لوگر",
         "owner": "MOTA",
         "type": "مسکونی",
-        "name": "قریه ویدخ مرکز ولایت لوگر"
+        "name": "قریه ویدخ مرکز ولایت لوگر",
+        "area": "125 جریب"
       },
       "geometry": {
         "type": "Polygon",
@@ -1376,95 +1389,32 @@ var lands = {
   ]
 };
 
-// گروه لایه‌ها
-var landLayer;
 
-// تابع رنگ‌دهی بر اساس نوع
-function getColor(type) {
-  switch(type) {
-    case "مسکونی": return "red";
-    case "زراعتی": return "green";
-    case "تجاری": return "blue";
-    case "دشت":return "purple"
-    default: return "gray";
-  }
-}
 
-// نمایش زمین‌ها
-function showLands(province) {
-  if (landLayer) { map.removeLayer(landLayer); }
-
- var polygons = {};
-
-  landLayer = L.geoJSON(lands, {
-    filter: function(feature) {
-      return province === "all" || feature.properties.province === province;
+var landLayer = L.geoJSON(lands, {
+    style: function (feature) {
+        return {
+            color: getColorByType(feature.properties.type),
+            weight: 2,
+            fillOpacity: 0.45
+        };
     },
-    style: function(feature) {
-      return { color: getColor(feature.properties.type), fillColor: getColor(feature.properties.type), fillOpacity: 0.6 };
-    },
-    onEachFeature: function (feature, layer) {
-      const landName = feature.properties.name || "بی‌نام";
-        const landLink = `${window.location.origin}${window.location.pathname}?name=${encodeURIComponent(landName)}`;
 
-      // محاسبه مساحت
-      var area = turf.area(feature);
-      var areaHa = (area / 10000).toFixed(2);
-      var areaGr = (area / 2000) . toFixed();
-      layer.bindPopup(
-        `<b>مالک:</b> ${feature.properties.owner}<br>` +
-        `<b>ولایت:</b> ${feature.properties.province}<br>` +
-        `<b>نوع:</b> ${feature.properties.type}<br>` +
-        `<b>نام:</b> ${feature.properties.name}<br>` +
-        `<b>مساحت:</b> ${area.toFixed(0)} متر مربع (${areaHa} هکتار) (${areaGr}جریب)<br>
-        <a href="${landLink}" target="_blank">لینک آدرس</a>
-        `
-      );
-
-      polygons[landName] = layer;
+     onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            "<br><b>ولایت:</b> " + feature.properties.province +
+            "<br><b>نام:</b> " + feature.properties.name +
+            "<br><b>مالک:</b> " + feature.properties.owner +
+            "<br><b>نوعیت:</b> " + feature.properties.type +
+            "<br><b>مساحت:</b> " + feature.properties.area 
+           
+        );
     }
-  }).addTo(map);
-   function goToLandFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      let name = params.get('name');
-      if (name) {
-        name = decodeURIComponent(name);
-        const polygon = polygons[name];
-        if (polygon) {
-          map.fitBounds(polygon.getBounds());
-          polygon.openPopup();
-          polygon.setStyle({ color: 'red', weight: 3 });
-        } else {
-          alert("زمینی با این نام پیدا نشد!");
-        }
-      }
-    }
-     goToLandFromURL();
+}).addTo(map); 
 
-}
-
-// اجرای اولیه
-showLands("all");
-
-// تغییر با Dropdown
-//document.getElementById("provinceSelect").addEventListener("change", function(e) {
-  //showLands(e.target.value);
-//});
-
-// افزودن Legend
-var legend = L.control({position: 'bottomleft'});
-legend.onAdd = function () {
-  var div = L.DomUtil.create('div', 'legend');
-  div.innerHTML += '<i style="background: red"></i> مسکونی<br>';
-  div.innerHTML += '<i style="background: green"></i> زراعتی<br>';
-  div.innerHTML += '<i style="background: blue"></i> تجاری<br>';
-  div.innerHTML += '<i style="background: purple"></i> دشت<br>';
-  return div;
-};
-legend.addTo(map);
-
+//بخش آپشن آنتخاب ولایات
 // 🎯 باز و بسته شدن منوی کشویی
-const dropdownToggle = document.querySelector('.dropdown-toggle');
+/*  const dropdownToggle = document.querySelector('.dropdown-toggle');
 const dropdownMenu = document.querySelector('.dropdown-menu');
 
 dropdownToggle.addEventListener('click', () => {
@@ -1484,21 +1434,144 @@ dropdownMenu.querySelectorAll('button').forEach(btn => {
   btn.addEventListener('click', () => {
     const selected = btn.getAttribute('data-province');
 
-    landLayer.clearLayers();
+     landLayer.clearLayers();
     lands.features.forEach(f => {
       if (selected === 'all' || f.properties.province === selected) {
         landLayer.addData(f);
       }
-    });
+    }); 
 
     // تغییر عنوان دکمه اصلی به ولایت انتخابی
     dropdownToggle.textContent = "🏙️ " + (selected === "all" ? "همه ولایات" : selected);
     dropdownMenu.style.display = 'none';
   });
+});  */
+
+// رنگ‌دهی به اساس نوعیت نوع زمین‌ها
+function getColorByType(type) {
+    const colors = {
+        "مسکونی": "red",
+        "زراعتی": "green",
+        "تجاری": "blue",
+        "دشت": "yellow"
+    };
+    return colors[type] || "#9E9E9E";  // رنگ پیش فرض
+}
+
+// گرفتن نوعیت‌ها از GeoJSON
+let allTypes = [];
+
+lands.features.forEach(f => {
+    let t = f.properties.type;
+    if (t && !allTypes.includes(t)) {
+        allTypes.push(t);
+    }
 });
 
-    goToLandFromURL();
+// ساختن Legend
+var legend = L.control({ position: "bottomleft" });
 
+legend.onAdd = function (map) {
+    var div = L.DomUtil.create("div", "legend");
+    div.innerHTML = "<h4>نوعیت زمین‌ها</h4>";
+
+    allTypes.forEach(type => {
+        div.innerHTML += `
+            <div class="legend-item">
+                <span class="legend-color" style="background:${getColorByType(type)}"></span>
+                <span>${type}</span>
+            </div>
+        `;
+    });
+
+    return div;
+};
+
+legend.addTo(map);
+
+
+//بخش ساختن لینک آدرس
+// مثال کامل: جایگزین کردن L.geoJSON ... .addTo(map);
+var geojsonLayer = L.geoJSON(lands, {
+  style: function(feature){
+    var t = feature && feature.properties ? feature.properties.type : "";
+    return { color: t === "مسکونی" ? "#ff7043" : "#66bb6a", weight: 1, fillOpacity: 0.45 };
+  },
+  
+  onEachFeature: function(feature, layer) {
+    // محافظت در برابر دادهٔ خراب یا undefined
+    if (!feature || !feature.properties) {
+      console.warn("Feature یا properties وجود ندارد:", feature);
+      return;
+    }
+
+    // دریافت امن نام زمین
+    var landName = feature.properties.name || "بی‌نام";
+
+    // ساختن لینک (استفاده از safe base)
+    var base = (window.location.protocol === "file:") 
+               ? window.location.href.split('?')[0].split('#')[0]
+               : (window.location.origin + window.location.pathname);
+    var link = base + "?land=" + encodeURIComponent(landName);
+
+    // ذخیره لینک/نام داخل لایه برای استفاده‌های بعدی
+    layer.landName = landName;
+    layer.landURL = link;
+    layer.landBounds = layer.getBounds();
+
+    // بایند پاپ‌آپ با لینک
+    layer.bindPopup(
+      "<b>ولایت:</b> " + (feature.properties.province || "-") + "<br>" +
+      "<b>نام:</b> " + landName + "<br>" +
+      "<b>مالک:</b> " + (feature.properties.owner || "-") + "<br>" +
+      "<b>نوع:</b> " + (feature.properties.type || "-") + "<br>" +
+      "<b>مساحت:</b> " + (feature.properties.area || "-") + "<br>" +
+      "<a href='" + link + "' target='_blank'>لینک آدرس</a>"
+    );
+
+    // (اختیاری) رویداد کلیک روی پلیگون که هم زوم کند هم پاپ‌آپ باز شود
+    layer.on('click', function(){
+      map.fitBounds(layer.landBounds);
+      layer.openPopup();
+    });
+  }
+
+  
+}).addTo(map);
+
+// --- زوم اتوماتیک نظر به نام زمین از URL ---
+var urlParams = new URLSearchParams(window.location.search);
+var targetLand = urlParams.get("land");
+
+if (targetLand) {
+  // صاف کردن ورژن فارسی برای مقایسه راحت‌تر
+  targetLand = targetLand.trim();
+
+  var targetLayer = null;
+
+  geojsonLayer.eachLayer(function (layer) {
+    if (
+      layer.feature &&
+      layer.feature.properties &&
+      layer.feature.properties.name &&
+      layer.feature.properties.name.trim() === targetLand
+    ) {
+      targetLayer = layer;
+    }
+  });
+
+  if (targetLayer) {
+    // زوم به زمین
+    map.fitBounds(targetLayer.getBounds());
+
+    // نمایش پاپ‌آپ
+     targetLayer.openPopup();
+  } else {
+    console.warn("زمین با این نام پیدا نشد:", targetLand);
+  } 
+}
+goToLandFromURL();
+    
 
 </script>
 </body>
